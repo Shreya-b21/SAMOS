@@ -1,0 +1,137 @@
+#include <iostream>
+#include <string>
+#include <cstdlib> // For rand() function
+#include <ctime>   // For time()
+using namespace std;
+// Class representing Attitude Control System
+class AttitudeControlSystem;
+
+// Class representing a spacecraft subsystem
+class Subsystem {
+private:
+    string name;
+    bool isFunctional; // Flag to track subsystem status
+
+public:
+    // Constructor with default name
+    Subsystem(string n = "Subsystem") : name(n), isFunctional(true) {
+        cout << "Creating " << name << endl;
+    }
+
+    // Destructor
+    ~Subsystem() {
+       cout << "Destroying " << name << endl;
+    }
+
+    // Function to simulate subsystem behavior
+    void simulate() {
+        if (isFunctional) {
+           cout << name << " is simulating..." << endl;
+        } else {
+            cout << name << " is not functional." << endl;
+        }
+    }
+
+    // Function to perform subsystem diagnostic
+    void diagnose() {
+        cout << "Diagnosing " << name << "..." << endl;
+        
+        // Simulate diagnostic by generating random number
+        srand(time(0)); // Seed the random number generator
+        int result = rand() % 2; // Generate either 0 or 1 randomly
+        
+        if (result == 0) {
+            cout << "Diagnostic result for " << name << ": OK" << endl;
+            isFunctional = true;
+        } else {
+            cout << "Diagnostic result for " << name << ": Issue detected" << endl;
+            isFunctional = false;
+        }
+    }
+
+    // Function to reset subsystem
+    void reset() {
+        cout << "Resetting " << name << "..." << endl;
+        
+        // Simulate reset by setting isFunctional to true
+        isFunctional = true;
+        
+        cout << name << " reset complete" << endl;
+    }
+
+    // Function to perform maintenance on subsystem
+    void maintenance() {
+        cout << "Performing maintenance on " << name << "..." << endl;
+        // Placeholder logic for maintenance
+        cout << "Maintenance complete for " << name << endl;
+    }
+
+    // Friend function to access private member
+    friend void status(const Subsystem& s, const AttitudeControlSystem& acs);
+};
+
+// Class representing Attitude Control System
+class AttitudeControlSystem {
+private:
+    string name;
+    double attitudeAngle;
+
+public:
+    // Constructor with default name and attitude angle
+    AttitudeControlSystem(string n = "Attitude Control System", double angle = 0.0) : name(n), attitudeAngle(angle) {
+        cout << "Creating " << name << endl;
+    }
+
+    // Destructor
+    ~AttitudeControlSystem() {
+        cout << "Destroying " << name << endl;
+    }
+
+    // Function to update attitude angle
+    void updateAttitude(double newAngle) {
+        attitudeAngle = newAngle;
+        cout << name << " updated attitude angle to " << attitudeAngle << " degrees." << endl;
+    }
+
+    // Friend function to access private member
+    friend void status(const Subsystem& s, const AttitudeControlSystem& acs);
+};
+
+// Friend function definition
+void status(const Subsystem& s, const AttitudeControlSystem& acs) {
+    cout << "Status of " << s.name << ": " << (s.isFunctional ? "Functional" : "Not Functional") << endl;
+    cout << "Attitude angle of " << acs.name << ": " << acs.attitudeAngle << " degrees" << endl;
+}
+
+int main() {
+    // Instantiate Subsystem objects
+    Subsystem propulsion("Propulsion System");
+    Subsystem power("Power System");
+    Subsystem communication("Communication System");
+    Subsystem thermalControl("Thermal Control System");
+
+    // Instantiate Attitude Control System
+    AttitudeControlSystem attitudeControl("Attitude Control System");
+
+    // Simulate subsystems
+    propulsion.simulate();
+    power.simulate();
+    communication.simulate();
+    thermalControl.simulate();
+
+    // Update attitude angle
+    attitudeControl.updateAttitude(45.0);
+
+    // Friend function to check status of subsystems
+    status(propulsion, attitudeControl);
+    status(power, attitudeControl);
+    status(communication, attitudeControl);
+    status(thermalControl, attitudeControl);
+
+    // Perform diagnostic, reset, and maintenance on subsystems
+    propulsion.diagnose();
+    propulsion.reset();
+    power.maintenance();
+
+    return 0;
+}
